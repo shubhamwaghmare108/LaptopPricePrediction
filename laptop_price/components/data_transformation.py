@@ -10,10 +10,9 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 from laptop_price.config import TRANSFORMED_DATA_DIR
 from laptop_price.entity.artifact_entity import DataTransformationArtifact
-from laptop_price.entity.config_entity import DataTransformationConfig
 from laptop_price.exception import PricePredictorException
 from laptop_price.logger import get_logger
-from laptop_price.utils import save_df, save_object
+from laptop_price.utils import save_object
 
 logger = get_logger(__name__)
 
@@ -72,7 +71,6 @@ def transform(raw_path: Path, target_col: str = "Price_INR") -> DataTransformati
 
         save_object(preprocessor, preprocessor_path)
 
-        # Persist readable, consistently imputed datasets for downstream training.
         X_train_out = X_train.copy()
         X_test_out = X_test.copy()
         for column in num_cols:
