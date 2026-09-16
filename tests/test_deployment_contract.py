@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import joblib
@@ -6,13 +7,14 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 PREPROCESSOR = ROOT / "artifacts" / "transformed" / "preprocessor.joblib"
-MODEL = ROOT / "prediction" / "models" / "current_model.joblib"
+MODEL = ROOT / "artifacts" / "model" / "best_model.joblib"
 FEATURES = ROOT / "artifacts" / "transformed" / "feature_list.json"
 TRAIN = ROOT / "artifacts" / "transformed" / "train.csv"
 
 
 def test_required_serving_artifacts_exist():
-    missing = [str(path.relative_to(ROOT)) for path in (PREPROCESSOR, MODEL, FEATURES) if not path.is_file()]
+    required = (PREPROCESSOR, MODEL, FEATURES, TRAIN)
+    missing = [str(path.relative_to(ROOT)) for path in required if not path.is_file()]
     assert not missing, f"Missing serving artifacts: {missing}"
 
 
@@ -24,8 +26,6 @@ def test_serving_artifacts_can_be_loaded():
 
 
 def test_training_schema_matches_feature_metadata():
-    import json
-
     with FEATURES.open(encoding="utf-8") as handle:
         metadata = json.load(handle)
 
