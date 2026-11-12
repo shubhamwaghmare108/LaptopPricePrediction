@@ -1,0 +1,32 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      MODEL_PATH: /app/prediction/models/current_model.joblib
+      PREPROCESSOR_PATH: /app/artifacts/transformed/preprocessor.joblib
+      FEATURE_LIST_PATH: /app/artifacts/transformed/feature_list.json
+      TRAIN_CSV_PATH: /app/artifacts/transformed/train.csv
+      CORS_ORIGINS: http://localhost:8501
+    volumes:
+      - ./artifacts:/app/artifacts:ro
+      - ./prediction/models:/app/prediction/models:ro
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend.Dockerfile
+    ports:
+      - "8501:8501"
+    environment:
+      PREDICTION_API_URL: http://backend:8000
+    depends_on:
+      backend:
+        condition: service_healthy
