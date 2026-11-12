@@ -3,7 +3,7 @@ import pandas as pd
 from laptop_price.exception import PricePredictorException
 from laptop_price.repositories.artifact_repository import load_prediction_artifacts
 TARGET_COLUMN = "Price_INR"
-PREDICTION_COLUMN = "predicted_Price_INR"
+PREDICTION_COLUMN = "predicted_price"
 def predict_dataframe(data: pd.DataFrame, model=None, preprocessor=None) -> pd.DataFrame:
     if data is None or data.empty:
         raise PricePredictorException("Prediction input is empty")
